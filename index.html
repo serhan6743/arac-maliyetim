@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Elektrikli ve benzinli araçların enerji, bakım ve toplam sahip olma maliyetini karşılaştırın.">
+<title>Aracım Kaça Mal Oluyor? | Araç Maliyet Karşılaştırma</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#182230;--muted:#64748b;--blue:#155eef;--green:#07845e;--line:#dce4ef;--soft:#eaf1ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#102a56,#155eef);color:#fff;padding:32px 18px 38px}
+.wrap{max-width:1120px;margin:auto}header h1{font-size:clamp(28px,4vw,42px);line-height:1.1;margin:0 0 10px}header p{max-width:760px;margin:0;color:#e1eaff}
+main{padding:22px 16px 44px}.notice{background:#fff8e6;border:1px solid #f4d58b;padding:12px 14px;border-radius:12px;margin:0 0 18px;color:#6d4b00;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 5px 18px #152b4b08}.inputs{grid-column:span 5}.results{grid-column:span 7}.full{grid-column:1/-1}
+h2{font-size:20px;margin:0 0 16px}h3{font-size:16px;margin:18px 0 10px}
+label{display:block;font-size:13px;color:var(--muted);font-weight:650;margin:0 0 5px}
+input,select{width:100%;padding:10px 11px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:2px solid #9dbbff;border-color:var(--blue)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{min-width:0}.hint{font-size:12px;color:var(--muted);margin-top:4px}
+button{border:0;background:var(--blue);color:#fff;padding:11px 15px;border-radius:10px;font-weight:700;cursor:pointer}button.secondary{background:#e8eef9;color:#183b78}button:hover{filter:brightness(.96)}
+.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdff}.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:clamp(20px,3vw,28px);margin-top:5px;overflow-wrap:anywhere}.green{color:var(--green)}.blue{color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:650}
+.barwrap{margin:12px 0}.barlabel{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:5px}.bar{height:12px;background:#e7edf5;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;border-radius:99px;background:var(--blue);width:0}.bar.greenbar>i{background:var(--green)}
+.small{font-size:12px;color:var(--muted)}.footer{margin-top:18px;color:var(--muted);font-size:12px}.pill{display:inline-block;background:var(--soft);color:#1949a9;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+#comparisonNote{padding:12px;border-radius:10px;background:#effaf5;color:#075b42;margin-top:14px}
+@media(max-width:850px){.inputs,.results{grid-column:1/-1}}@media(max-width:480px){.formgrid,.statgrid{grid-template-columns:1fr}.card{padding:15px}header{padding-top:26px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<span class="pill">ÜCRETSİZ HESAPLAMA ARACI</span>
+<h1>Aracım kaça mal oluyor?</h1>
+<p>Elektrikli ve benzinli araçların enerji/yakıt, yıllık bakım ve toplam sahip olma maliyetini aynı koşullarda karşılaştırın. Varsayımları değiştirebilir, kendi aracınızın değerlerini girebilirsiniz.</p>
+</div></header>
+<main class="wrap">
+<div class="notice"><strong>Önemli:</strong> Bu sürüm çalışan bir prototiptir. Araç tüketimleri ve bakım tutarları örnek/temsili başlangıç değerleridir; kesin üretici verisi veya servis teklifi değildir. Sonuçları karar vermeden önce güncel fiyatlarla doğrulayın.</div>
+<div class="grid">
+<section class="card inputs">
+<h2>1. Kullanım bilgileri</h2>
+<div class="formgrid">
+<div class="field"><label for="km">Yıllık mesafe (km)</label><input id="km" type="number" min="0" value="15000"></div>
+<div class="field"><label for="years">Sahip olma süresi (yıl)</label><input id="years" type="number" min="1" max="30" value="5"></div>
+<div class="field"><label for="gasPrice">Benzin fiyatı (₺/litre)</label><input id="gasPrice" type="number" min="0" step=".01" value="55"></div>
+<div class="field"><label for="homePrice">Evde elektrik (₺/kWh)</label><input id="homePrice" type="number" min="0" step=".01" value="3.5"></div>
+<div class="field"><label for="publicPrice">Halka açık şarj (₺/kWh)</label><input id="publicPrice" type="number" min="0" step=".01" value="12.5"></div>
+<div class="field"><label for="homeShare">Evde şarj payı (%)</label><input id="homeShare" type="number" min="0" max="100" value="70"></div>
+</div>
+<h3>2. Araçları seçin</h3>
+<div class="formgrid">
+<div class="field"><label for="ice">Benzinli araç</label><select id="ice"></select></div>
+<div class="field"><label for="ev">Elektrikli araç</label><select id="ev"></select></div>
+</div>
+<h3>3. İsterseniz değerleri özelleştirin</h3>
+<div class="formgrid">
+<div class="field"><label for="iceConsumption">Benzinli tüketim (L/100 km)</label><input id="iceConsumption" type="number" min="0" step=".1"></div>
+<div class="field"><label for="evConsumption">Elektrikli tüketim (kWh/100 km)</label><input id="evConsumption" type="number" min="0" step=".1"></div>
+<div class="field"><label for="iceMaintenance">Benzinli yıllık bakım (₺)</label><input id="iceMaintenance" type="number" min="0" step="100"></div>
+<div class="field"><label for="evMaintenance">Elektrikli yıllık bakım (₺)</label><input id="evMaintenance" type="number" min="0" step="100"></div>
+<div class="field"><label for="icePurchase">Benzinli satın alma fiyatı (₺)</label><input id="icePurchase" type="number" min="0" step="1000"></div>
+<div class="field"><label for="evPurchase">Elektrikli satın alma fiyatı (₺)</label><input id="evPurchase" type="number" min="0" step="1000"></div>
+</div>
+<p class="hint">Araç seçimi örnek tüketim ve bakım değerlerini getirir. İstediğiniz alanları sonradan değiştirebilirsiniz.</p>
+<button id="reset" class="secondary" type="button">Seçili araçların varsayılanlarına dön</button>
+</section>
+<section class="card results">
+<h2>Karşılaştırma sonucu</h2>
+<div class="statgrid">
+<div class="stat"><span>Benzinli yıllık enerji/yakıt gideri</span><strong id="iceFuel" class="blue">—</strong></div>
+<div class="stat"><span>Elektrikli yıllık şarj gideri</span><strong id="evFuel" class="green">—</strong></div>
+<div class="stat"><span>Yıllık toplam fark (bakım dâhil)</span><strong id="annualDiff">—</strong></div>
+<div class="stat"><span>Seçilen sürede toplam fark*</span><strong id="totalDiff">—</strong></div>
+</div>
+<div class="barwrap"><div class="barlabel"><span id="iceBarLabel">Benzinli: —</span><strong id="iceBarValue">—</strong></div><div class="bar"><i id="iceBar"></i></div></div>
+<div class="barwrap"><div class="barlabel"><span id="evBarLabel">Elektrikli: —</span><strong id="evBarValue">—</strong></div><div class="bar greenbar"><i id="evBar"></i></div></div>
+<div id="comparisonNote" aria-live="polite">Değerleri değiştirdiğinizde sonuçlar otomatik güncellenir.</div>
+<h3>Detaylı maliyet tablosu</h3>
+<table><thead><tr><th>Gider kalemi</th><th>Benzinli</th><th>Elektrikli</th></tr></thead><tbody>
+<tr><td>100 km enerji/yakıt maliyeti</td><td id="ice100">—</td><td id="ev100">—</td></tr>
+<tr><td>Yıllık enerji/yakıt</td><td id="iceYearFuel">—</td><td id="evYearFuel">—</td></tr>
+<tr><td>Yıllık bakım (tahmini)</td><td id="iceYearMaint">—</td><td id="evYearMaint">—</td></tr>
+<tr><td>Yıllık işletme toplamı</td><td id="iceYearTotal">—</td><td id="evYearTotal">—</td></tr>
+<tr><td>Satın alma fiyatı (girildiyse)</td><td id="iceBuyOut">—</td><td id="evBuyOut">—</td></tr>
+<tr><td id="periodLabel">Dönem toplamı (satın alma dâhil)</td><td id="icePeriod">—</td><td id="evPeriod">—</td></tr>
+</tbody></table>
+<p class="small">* Dönem toplamı = satın alma fiyatı + dönem boyunca yakıt/şarj + tahmini bakım. Sigorta, kasko, MTV, lastik, finansman, ikinci el değeri/değer kaybı, batarya değişimi ve beklenmeyen arızalar bu prototipte hesaba katılmaz.</p>
+</section>
+<section class="card full">
+<h2>Veri yaklaşımı ve sonraki geliştirmeler</h2>
+<p>Bu prototipte hesaplama tarayıcıda yapılır; kullanıcı verileri bir sunucuya gönderilmez. Üretim sürümünde her araç için kaynak, veri tarihi, model yılı, donanım ve test standardı (ör. WLTP/gerçek kullanım) tutulmalıdır. Tüketim değerlerini tek bir “kesin” sayı gibi değil, mümkünse şehir içi/karma/otoyol senaryoları ve bir aralık olarak göstermek daha güvenilirdir.</p>
+<p><strong>Önerilen geliştirmeler:</strong> marka-model veritabanı ve yönetim paneli; fiyat güncelleme sistemi; kaynak bağlantısı ve güncelleme tarihi; kullanıcıların araçları yan yana eklemesi; PDF raporu; şehir/şarj senaryosu; MTV, sigorta, kasko, değer kaybı ve finansman maliyeti; Google Analytics/arama motoru optimizasyonu; reklam ve şeffaf affiliate bağlantıları.</p>
+<div class="footer">Araç maliyet hesaplayıcı prototipi · Sonuçlar tahmindir; satın alma veya finansal karar için tek başına kullanılmamalıdır.</div>
+</section>
+</div>
+</main>
+<script>
+const cars = {
+  ice: [
+    {id:"corolla",name:"Toyota Corolla 1.5 (örnek)",cons:6.7,maint:12000,purchase:1600000},
+    {id:"clio",name:"Renault Clio benzinli (örnek)",cons:6.2,maint:11000,purchase:1250000},
+    {id:"custom-ice",name:"Kendi aracım / manuel giriş",cons:7.0,maint:12000,purchase:1500000}
+  ],
+  ev: [
+    {id:"t10x",name:"Togg T10X (örnek)",cons:19.0,maint:7000,purchase:1900000},
+    {id:"model-y",name:"Tesla Model Y (örnek)",cons:17.5,maint:8000,purchase:2300000},
+    {id:"custom-ev",name:"Kendi aracım / manuel giriş",cons:18.0,maint:7000,purchase:1900000}
+  ]
+};
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:0}).format(Number.isFinite(n)?n:0);
+const num=id=>Math.max(0,Number($(id).value)||0);
+function populate(){
+  for(const type of ['ice','ev']){
+    $(type).innerHTML=cars[type].map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  }
+  loadDefaults(); calculate();
+}
+function selected(type){return cars[type].find(c=>c.id===$(type).value)||cars[type][0]}
+function loadDefaults(){
+  const i=selected('ice'), e=selected('ev');
+  $('iceConsumption').value=i.cons;$('iceMaintenance').value=i.maint;$('icePurchase').value=i.purchase;
+  $('evConsumption').value=e.cons;$('evMaintenance').value=e.maint;$('evPurchase').value=e.purchase;
+  calculate();
+}
+function calculate(){
+  const km=num('km'), years=Math.max(1,num('years')), gas=num('gasPrice'), home=num('homePrice'), pub=num('publicPrice'), share=Math.min(100,num('homeShare'))/100;
+  const ic=num('iceConsumption'), ec=num('evConsumption'), im=num('iceMaintenance'), em=num('evMaintenance'), ip=num('icePurchase'), ep=num('evPurchase');
+  const i100=ic*gas, ePrice=home*share+pub*(1-share), e100=ec*ePrice;
+  const ifuel=i100*km/100, efuel=e100*km/100, itotal=ifuel+im, etotal=efuel+em;
+  const iper=ip+itotal*years, eper=ep+etotal*years, annual=itotal-etotal, total=iper-eper;
+  $('iceFuel').textContent=fmt(ifuel);$('evFuel').textContent=fmt(efuel);
+  $('annualDiff').textContent=(annual>=0?'EV avantajı: ':'Benzinli avantajı: ')+fmt(Math.abs(annual));
+  $('annualDiff').className=annual>=0?'green':'blue';
+  $('totalDiff').textContent=(total>=0?'EV maliyet avantajı: ':'Benzinli maliyet avantajı: ')+fmt(Math.abs(total));
+  $('totalDiff').className=total>=0?'green':'blue';
+  $('ice100').textContent=fmt(i100);$('ev100').textContent=fmt(e100);
+  $('iceYearFuel').textContent=fmt(ifuel);$('evYearFuel').textContent=fmt(efuel);
+  $('iceYearMaint').textContent=fmt(im);$('evYearMaint').textContent=fmt(em);
+  $('iceYearTotal').textContent=fmt(itotal);$('evYearTotal').textContent=fmt(etotal);
+  $('iceBuyOut').textContent=fmt(ip);$('evBuyOut').textContent=fmt(ep);
+  $('icePeriod').textContent=fmt(iper);$('evPeriod').textContent=fmt(eper);
+  $('periodLabel').textContent=`${years} yıllık dönem toplamı (satın alma dâhil)`;
+  const max=Math.max(itotal,etotal,1);
+  $('iceBar').style.width=(itotal/max*100)+'%';$('evBar').style.width=(etotal/max*100)+'%';
+  $('iceBarLabel').textContent='Benzinli yıllık işletme gideri';$('evBarLabel').textContent='Elektrikli yıllık işletme gideri';
+  $('iceBarValue').textContent=fmt(itotal);$('evBarValue').textContent=fmt(etotal);
+  let note;
+  if(Math.abs(total)<1) note='Girilen varsayımlarla dönem toplamları yaklaşık eşit.';
+  else if(total>0) note=`Girilen varsayımlarla elektrikli araç, ${years} yılda satın alma ve işletme toplamında yaklaşık ${fmt(total)} daha düşük maliyetli.`;
+  else note=`Girilen varsayımlarla benzinli araç, ${years} yılda satın alma ve işletme toplamında yaklaşık ${fmt(Math.abs(total))} daha düşük maliyetli.`;
+  $('comparisonNote').textContent=note;
+}
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',()=>{if(el.tagName==='SELECT')loadDefaults();else calculate()}));
+$('reset').addEventListener('click',loadDefaults);
+populate();
+</script>
+</body></html>
